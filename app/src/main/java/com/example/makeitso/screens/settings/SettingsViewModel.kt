@@ -33,10 +33,11 @@ class SettingsViewModel @Inject constructor(
   private val accountService: AccountService,
   private val storageService: StorageService
 ) : MakeItSoViewModel(logService) {
-  val uiState = accountService.currentUser.map {
-    SettingsUiState(it.isAnonymous)
-  }
 
+  // Asegúrate de que currentUser es un Flow o StateFlow
+  val uiState = accountService.currentUser.map { user ->
+    SettingsUiState(isAnonymousAccount = user.isAnonymous)
+  }
 
   fun onLoginClick(openScreen: (String) -> Unit) = openScreen(LOGIN_SCREEN)
 

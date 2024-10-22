@@ -40,14 +40,18 @@ fun SettingsScreen(
   openScreen: (String) -> Unit,
   viewModel: SettingsViewModel = hiltViewModel()
 ) {
+  // Recolectar el flujo uiState como estado en la vista
+  val uiState by viewModel.uiState.collectAsState(initial = SettingsUiState(false))
+
   SettingsScreenContent(
-    uiState = viewModel.uiState,
+    uiState = uiState,
     onLoginClick = { viewModel.onLoginClick(openScreen) },
     onSignUpClick = { viewModel.onSignUpClick(openScreen) },
     onSignOutClick = { viewModel.onSignOutClick(restartApp) },
     onDeleteMyAccountClick = { viewModel.onDeleteMyAccountClick(restartApp) }
   )
 }
+
 
 @ExperimentalMaterialApi
 @Composable
@@ -141,15 +145,16 @@ private fun DeleteMyAccountCard(deleteMyAccount: () -> Unit) {
 @ExperimentalMaterialApi
 @Composable
 fun SettingsScreenPreview() {
-  val uiState = SettingsUiState(isAnonymousAccount = false)
+  // Simulamos un estado inicial para la vista previa
+  val uiState = SettingsUiState(isAnonymousAccount = true)
 
   MakeItSoTheme {
     SettingsScreenContent(
       uiState = uiState,
-      onLoginClick = { },
-      onSignUpClick = { },
-      onSignOutClick = { },
-      onDeleteMyAccountClick = { }
+      onLoginClick = { /* No-op for preview */ },
+      onSignUpClick = { /* No-op for preview */ },
+      onSignOutClick = { /* No-op for preview */ },
+      onDeleteMyAccountClick = { /* No-op for preview */ }
     )
   }
 }
