@@ -35,14 +35,18 @@ import com.example.makeitso.common.ext.smallSpacer
 import com.example.makeitso.common.ext.toolbarActions
 import com.example.makeitso.model.Task
 import com.example.makeitso.theme.MakeItSoTheme
-
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 @ExperimentalMaterialApi
 fun TasksScreen(
   openScreen: (String) -> Unit,
   viewModel: TasksViewModel = hiltViewModel()
 ) {
+  // Recogemos el estado de las tareas utilizando collectAsStateWithLifecycle
+  val tasks by viewModel.tasks.collectAsStateWithLifecycle(emptyList())
+
   TasksScreenContent(
+    tasks = tasks,  // Pasamos las tareas obtenidas al contenido
     onAddClick = viewModel::onAddClick,
     onSettingsClick = viewModel::onSettingsClick,
     onTaskCheckChange = viewModel::onTaskCheckChange,
@@ -58,6 +62,7 @@ fun TasksScreen(
 @ExperimentalMaterialApi
 fun TasksScreenContent(
   modifier: Modifier = Modifier,
+  tasks: List<Task>,  // Recibimos la lista de tareas
   onAddClick: ((String) -> Unit) -> Unit,
   onSettingsClick: ((String) -> Unit) -> Unit,
   onTaskCheckChange: (Task) -> Unit,
@@ -87,7 +92,7 @@ fun TasksScreenContent(
       Spacer(modifier = Modifier.smallSpacer())
 
       LazyColumn {
-        items(emptyList<Task>(), key = { it.id }) { taskItem ->
+        items(tasks, key = { it.id }) { taskItem ->
           TaskItem(
             task = taskItem,
             options = listOf(),
@@ -99,13 +104,18 @@ fun TasksScreenContent(
     }
   }
 }
-
 @Preview(showBackground = true)
 @ExperimentalMaterialApi
 @Composable
 fun TasksScreenPreview() {
+  val sampleTasks = listOf(
+    Task(id = "1", title = "Task 1", completed = false),  // Usa isCompleted si existe
+    Task(id = "2", title = "Task 2", completed = true)
+  )
+
   MakeItSoTheme {
     TasksScreenContent(
+      tasks = sampleTasks,
       onAddClick = { },
       onSettingsClick = { },
       onTaskCheckChange = { },
